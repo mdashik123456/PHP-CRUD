@@ -1,7 +1,8 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
+$servername = "localhost"; //give your server name
+$username = "root"; //give your server username
+$password = ""; //give your server pass if available
+
 
 // Create connection
 $conn = mysqli_connect($servername, $username, $password);
@@ -10,12 +11,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Create database
+// Create database automatically
 $sql = "CREATE DATABASE IF NOT EXISTS php_crud;";
 if ($conn->query($sql) === TRUE) {
     // echo "Database created successfully";
     $conn->close();
 
+    //create table automatically
     $sql = "CREATE TABLE IF NOT EXISTS crud (
             id varchar(25) NOT NULL,
             name varchar(255) NOT NULL,
