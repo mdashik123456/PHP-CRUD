@@ -18,13 +18,7 @@ if ($conn->query($sql) === TRUE) {
     $conn->close();
 
     //create table automatically
-    $sql = "CREATE TABLE IF NOT EXISTS crud (
-            id varchar(25) NOT NULL,
-            name varchar(255) NOT NULL,
-            email varchar(255) NOT NULL,
-            phone_number varchar(13) NOT NULL,
-            department varchar(255) NOT NULL
-          );";
+    $sql = "CREATE TABLE IF NOT EXISTS `php_crud`.`crud` (`ID` INT NOT NULL AUTO_INCREMENT , `Name` VARCHAR(200) NOT NULL , `Email` VARCHAR(200) NOT NULL , `Age` INT(4) NOT NULL , `Gender` VARCHAR(8) NOT NULL , `DOB` DATE NOT NULL , `About` VARCHAR(255) NOT NULL , `Image` VARCHAR(255) NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;";
 
 
     $dbname = "php_crud";

@@ -1,14 +1,24 @@
 <?php
+session_start();
 include "./connection.php";
 
 if (isset($_POST["submit_btn"])) {
-    $id = $_POST["id"];
     $name = $_POST["name"];
     $email = $_POST["email"];
-    $phone_num = $_POST["phone_num"];
-    $department = $_POST["department"];
+    $age = $_POST["age"];
+    $gender = $_POST["gender"];
+    $dob = $_POST["dob"];
+    $about_user = $_POST["about_user"];
 
-    $sql = "INSERT INTO `crud` (`id`, `name`, `email`, `phone_number`, `department`) VALUES ('$id', '$name', '$email', '$phone_num', '$department');";
+    //Image processing
+    $target_file = $_FILES["profile_pic"]["name"];
+    $image_tmp_name = $_FILES["profile_pic"]["tmp_name"];
+    $imageFileExt = pathinfo($target_file, PATHINFO_EXTENSION);
+    $profile_pic = "images/" . $email . "." . $imageFileExt;
+
+    move_uploaded_file($image_tmp_name, $profile_pic);
+
+    $sql = "INSERT INTO `crud` (`ID`, `Name`, `Email`, `Age`, `Gender`, `DOB`, `About`, `Image`) VALUES (NULL, '$name', '$email', '$age', '$gender', '$dob', '$about_user', '$profile_pic')";
     $result = mysqli_query($conn, $sql);
 
     if ($result) {
@@ -22,6 +32,8 @@ if (isset($_POST["submit_btn"])) {
 ?>
 
 
+
+
 <!doctype html>
 <html lang="en">
 
@@ -31,10 +43,13 @@ if (isset($_POST["submit_btn"])) {
     <title>PHP CRUD Project</title>
 
     <!-- bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
 
@@ -46,7 +61,8 @@ if (isset($_POST["submit_btn"])) {
 
 
     <!-- Create Modal -->
-    <div class="modal fade" id="add_new_user_modal" tabindex="-1" aria-labelledby="add_new_user_modalLabel" aria-hidden="true">
+    <div class="modal fade" id="add_new_user_modal" tabindex="-1" aria-labelledby="add_new_user_modalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -56,44 +72,55 @@ if (isset($_POST["submit_btn"])) {
 
                 <div class="modal-body">
 
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="name" class="form-label">ID</label>
-                            <input type="text" class="form-control" id="id" placeholder="Enter Student ID" name="id" required>
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Enter Full Name" name="name"
+                                required>
                         </div>
 
-
                         <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter Full Name" name="name" required>
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter Email Address"
+                                name="email" required>
                         </div>
 
-
                         <div class="mb-3">
-                            <label for="name" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter Email Address" name="email" required>
-                        </div>
-
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" id="phone_num" placeholder="Enter Phone Number" name="phone_num" required>
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" placeholder="Enter Age" name="age"
+                                required>
                         </div>
 
 
                         <div class="col-md-3">
-                            <label for="validationCustom04" class="form-label">Department</label>
-                            <select class="form-select" id="validationCustom04" name="department" required>
+                            <label for="validationCustom04" class="form-label">Gender</label>
+                            <select class="form-select" id="validationCustom04" name="gender" required>
                                 <option selected disabled value="">Choose...</option>
-                                <option value="Software Engineering">Software Engineering</option>
-                                <option value="Computer Science & Engineering">Computer Science & Engineering</option>
-                                <option value="Electrical and Electronic Engineering">Electrical and Electronic Engineering</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
                             </select>
                             <div class="invalid-feedback">
                                 Please select a valid state.
                             </div>
                         </div>
                         <br>
+
+                        <div class="mb-3">
+                            <label class="form-label">DOB</label>
+                            <input type="date" class="form-control" id="dob" placeholder="Date of Barth" name="dob"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>About User</label>
+                            <textarea class="form-control" id="about_user" name="about_user" rows="3" placeholder="Write a short description"></textarea>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label class="form-label">Upload Image</label>
+                            <input class="form-control" type="file" name="profile_pic" accept=".jpg, .png, .jpeg, .gif"
+                                value=""></input>
+                        </div>
 
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-dark" name="submit_btn">Submit</button>
@@ -108,7 +135,7 @@ if (isset($_POST["submit_btn"])) {
 
 
 
-
+    
 
 
     <div class="container">
@@ -123,16 +150,19 @@ if (isset($_POST["submit_btn"])) {
         }
         ?>
 
-        <button type="button" class="btn btn-outline-dark mt-5 mb-2" data-bs-toggle="modal" data-bs-target="#add_new_user_modal">Add New User</button>
+        <button type="button" class="btn btn-outline-dark mt-5 mb-2" data-bs-toggle="modal"
+            data-bs-target="#add_new_user_modal">Add New User</button>
         <table class="table table-hover text-center">
             <thead class="table-dark">
                 <tr>
                     <th scope="col">Serial</th>
-                    <th scope="col">ID</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
-                    <th scope="col">Phone Number</th>
-                    <th scope="col">Department</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Date of Birth</th>
+                    <th scope="col">About Users</th>
+                    <th scope="col">Image</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -144,20 +174,41 @@ if (isset($_POST["submit_btn"])) {
                 $i = 0;
                 while ($row = mysqli_fetch_assoc($result)) {
                     $i++;
-                ?>
+                    ?>
                     <tr>
-                        <th scope="row"><?php echo $i ?></th>
-                        <td><?php echo $row["id"] ?></td>
-                        <td><?php echo $row["name"] ?></td>
-                        <td><?php echo $row["email"] ?></td>
-                        <td><?php echo $row["phone_number"] ?></td>
-                        <td><?php echo $row["department"] ?></td>
+                        <th scope="row">
+                            <?php echo $i ?>
+                        </th>
                         <td>
-                            <a href="update.php?id=<?php echo $row["id"] ?>" class="link-dark"><i class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
-                            <a href="delete.php?id=<?php echo $row["id"] ?>" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
+                            <?php echo $row["Name"] ?>
+                        </td>
+                        <td>
+                            <?php echo $row["Email"] ?>
+                        </td>
+                        <td>
+                            <?php echo $row["Age"] ?>
+                        </td>
+                        <td>
+                            <?php echo $row["Gender"] ?>
+                        </td>
+                        <td>
+                            <?php echo $row["DOB"] ?>
+                        </td>
+                        <td>
+                            <?php echo $row["About"] ?>
+                        </td>
+                        <td>
+                            <?php $image = $row["Image"];
+                            echo "<img style='height: 100px; width: 100px;' src='$image'>" ?>
+
+                        <td>
+                            <a href="update.php?id=<?php echo $row["ID"] ?>" class="link-dark"><i
+                                    class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
+                            <a href="delete.php?id=<?php echo $row["ID"]?> <?php $_SESSION["img"] = $row["Image"]?>" class="link-dark"><i
+                                    class="fa-solid fa-trash fs-5"></i></a>
                         </td>
                     </tr>
-                <?php
+                    <?php
                 }
                 ?>
 
@@ -175,7 +226,9 @@ if (isset($_POST["submit_btn"])) {
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
